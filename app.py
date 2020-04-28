@@ -21,7 +21,6 @@ def create_app(test_config=None):
 
     @app.after_request
     def after_request(response):
-        # response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-All-Methods',
                              'GET, POST, PATCH, DELETE, OPTIONS')
         response.headers.add('Access-Control-Allow-Origin', '*')
@@ -38,7 +37,9 @@ def create_app(test_config=None):
                 "success": True,
                 "actors": all_actors
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(401)
 
     @app.route('/movies', methods=['GET'])
@@ -51,7 +52,9 @@ def create_app(test_config=None):
                 "success": True,
                 "movies": all_movies
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(401)
 
     @app.route('/actors', methods=["POST"])
@@ -71,7 +74,9 @@ def create_app(test_config=None):
                 'success': True,
                 'actors': array_of_actor
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(400)
 
     @app.route('/movies', methods=["POST"])
@@ -89,7 +94,9 @@ def create_app(test_config=None):
                 'success': True,
                 'actors': array_of_movie
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(400)
 
     @app.route('/actors/<int:actor_id>', methods=["PATCH"])
@@ -106,14 +113,20 @@ def create_app(test_config=None):
                 actor.age = update_to_actor['age']
             if hasattr('update_to_actor', 'gender'):
                 actor.gender = update_to_actor['gender']
-            updated_actor = [
-                {'id': actor.id, 'name': actor.name, 'age': actor.age, 'gender': actor.gender}]
+            updated_actor = [{
+                'id': actor.id,
+                'name': actor.name,
+                'age': actor.age,
+                'gender': actor.gender
+            }]
             actor.update()
             return jsonify({
                 'success': True,
                 'actors': updated_actor
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(404)
 
     @app.route('/movies/<int:movie_id>', methods=["PATCH"])
@@ -122,21 +135,28 @@ def create_app(test_config=None):
         try:
             try:
                 movie = Movie.query.get(movie_id)
-            except:
-                abort(404)
+            except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
+            abort(404)
             update_to_movie = json.loads(request.data)
             if hasattr('update_to_movie', 'title'):
                 movie.title = update_to_movie['title']
             if hasattr('update_to_movie', 'release'):
                 movie.release = update_to_movie['release']
-            updated_movie = [
-                {'id': movie.id, 'title': movie.title, 'release': movie.release}]
+            updated_movie = [{
+                'id': movie.id,
+                'title': movie.title,
+                'release': movie.release
+            }]
             movie.update()
             return jsonify({
                 'success': True,
                 'movies': updated_movie
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(404)
 
     @app.route('/actors/<int:actor_id>', methods=["Delete"])
@@ -152,7 +172,9 @@ def create_app(test_config=None):
                 'success': True,
                 'actors': actor_id
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(401)
 
     @app.route('/movies/<int:movie_id>', methods=["Delete"])
@@ -168,7 +190,9 @@ def create_app(test_config=None):
                 'success': True,
                 'movies': movie_id
             })
-        except:
+        except Exception as error:
+            print("Oops! An exception has occured:", error)
+            print("Exception TYPE:", type(error))
             abort(401)
 
     @app.errorhandler(400)
