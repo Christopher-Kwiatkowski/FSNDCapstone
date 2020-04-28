@@ -17,7 +17,7 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app)
 
-    db_drop_and_create_all()
+    # db_drop_and_create_all()
 
     @app.after_request
     def after_request(response):
@@ -31,10 +31,8 @@ def create_app(test_config=None):
     @requires_auth("get:actors")
     def get_all_actors(jwt):
         try:
-            print('actors')
             actors = Actor.query.all()
             all_actors = [actor.format() for actor in actors]
-            print(all_actors)
             return jsonify({
                 "success": True,
                 "actors": all_actors
@@ -46,10 +44,8 @@ def create_app(test_config=None):
     @requires_auth("get:movies")
     def get_all_movies(jwt):
         try:
-            print('movies')
             movies = Movie.query.all()
             all_movies = [movie.format() for movie in movies]
-            print(all_movies)
             return jsonify({
                 "success": True,
                 "movies": all_movies
@@ -75,7 +71,7 @@ def create_app(test_config=None):
                 'actors': array_of_actor
             })
         except:
-            abort(401)
+            abort(400)
 
     @app.route('/movies', methods=["POST"])
     @requires_auth("post:movies")
@@ -93,7 +89,7 @@ def create_app(test_config=None):
                 'actors': array_of_movie
             })
         except:
-            abort(401)
+            abort(400)
 
     @app.route('/actors/<int:actor_id>', methods=["PATCH"])
     @requires_auth("patch:actors")
@@ -117,14 +113,15 @@ def create_app(test_config=None):
                 'actors': updated_actor
             })
         except:
-            abort(401)
+            abort(404)
 
     @app.route('/movies/<int:movie_id>', methods=["PATCH"])
     @requires_auth("patch:movies")
     def update_movie(jwt, movie_id):
         try:
-            movie = Movie.query.get(movie_id)
-            if not movie:
+            try:
+                movie = Movie.query.get(movie_id)
+            except:
                 abort(404)
             update_to_movie = json.loads(request.data)
             if hasattr('update_to_movie', 'title'):
@@ -139,7 +136,7 @@ def create_app(test_config=None):
                 'movies': updated_movie
             })
         except:
-            abort(401)
+            abort(404)
 
     @app.route('/actors/<int:actor_id>', methods=["Delete"])
     @requires_auth("delete:actors")
@@ -173,13 +170,13 @@ def create_app(test_config=None):
         except:
             abort(401)
 
-    @app.errorhandler(422)
-    def unprocessable(error):
+    @app.errorhandler(400)
+    def bad_request(error):
         return jsonify({
             "success": False,
-            "error": 422,
-            "message": "unprocessable"
-        }), 422
+            "error": 400,
+            "message": "Bad request"
+        }), 400
 
     @app.errorhandler(404)
     def not_found(error):
