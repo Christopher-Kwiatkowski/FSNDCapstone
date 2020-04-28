@@ -27,9 +27,10 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
 
-    @app.route('actors', methods=['GET'])
+    @app.route('/actors', methods=['GET'])
     @requires_auth("get:actors")
     def get_all_actors(jwt):
+        print('inside')
         try:
             actors = Actor.query.all()
             all_actors = [actor.format() for actor in actors]
@@ -40,7 +41,7 @@ def create_app(test_config=None):
         except:
             abort(401)
 
-    @app.route('movies', methods=['GET'])
+    @app.route('/movies', methods=['GET'])
     @requires_auth("get:movies")
     def get_all_movies(jwt):
         try:
@@ -53,7 +54,7 @@ def create_app(test_config=None):
         except:
             abort(401)
 
-    @app.route('actors', methods=["POST"])
+    @app.route('/actors', methods=["POST"])
     @requires_auth("post:actors")
     def add_new_actor(jwt):
         try:
@@ -73,7 +74,7 @@ def create_app(test_config=None):
         except:
             abort(400)
 
-    @app.route('movies', methods=["POST"])
+    @app.route('/movies', methods=["POST"])
     @requires_auth("post:movies")
     def add_new_movie(jwt):
         try:
@@ -91,7 +92,7 @@ def create_app(test_config=None):
         except:
             abort(400)
 
-    @app.route('actors/<int:actor_id>', methods=["PATCH"])
+    @app.route('/actors/<int:actor_id>', methods=["PATCH"])
     @requires_auth("patch:actors")
     def update_actor(jwt, actor_id):
         try:
@@ -115,7 +116,7 @@ def create_app(test_config=None):
         except:
             abort(404)
 
-    @app.route('movies/<int:movie_id>', methods=["PATCH"])
+    @app.route('/movies/<int:movie_id>', methods=["PATCH"])
     @requires_auth("patch:movies")
     def update_movie(jwt, movie_id):
         try:
@@ -138,7 +139,7 @@ def create_app(test_config=None):
         except:
             abort(404)
 
-    @app.route('actors/<int:actor_id>', methods=["Delete"])
+    @app.route('/actors/<int:actor_id>', methods=["Delete"])
     @requires_auth("delete:actors")
     def delete_actor(jwt, actor_id):
         try:
@@ -154,7 +155,7 @@ def create_app(test_config=None):
         except:
             abort(401)
 
-    @app.route('movies/<int:movie_id>', methods=["Delete"])
+    @app.route('/movies/<int:movie_id>', methods=["Delete"])
     @requires_auth("delete:movies")
     def delete_movie(jwt, movie_id):
         try:
